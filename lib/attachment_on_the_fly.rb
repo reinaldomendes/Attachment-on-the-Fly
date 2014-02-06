@@ -79,6 +79,7 @@ Paperclip::Attachment.class_eval do
     extension = base_arr.pop
     base_name = base_arr.join('.')
     extension = parameters[:extension] || extension
+    style     = parameters[:style] || :original
     parameters.delete :extension
     
 
@@ -86,7 +87,10 @@ Paperclip::Attachment.class_eval do
     url_file_name = url_arr.pop
     url_path = url_arr.join("/")
 
-    original = path + "/" + self.original_filename    
+    
+    original = path + "/" + File.basename(self.path(style).to_s)
+    puts "onthefly #{original}"
+    original = path + "/" + self.original_filename
     newfilename = path + "/" + prefix + base_name +  '.' + extension
     new_path = url_path + "/" + prefix + base_name + '.' + extension
 
