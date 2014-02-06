@@ -23,7 +23,7 @@ Paperclip::Attachment.class_eval do
     # if not generate image and return string to file  Fiel is in format S_Height_x_Width_FILE_NAME
     image_name = nil
     parameters = args.shift    
-    parameters ||= {:quality => 100}
+    parameters ||= {:quality => 70}
     
     if symbol.to_s.match(/^s_[0-9]+_[0-9]+/) || symbol.to_s.match(/^cls_[0-9]+_[0-9]+/)
       values = symbol.to_s.split("_")
@@ -79,7 +79,7 @@ Paperclip::Attachment.class_eval do
     extension = base_arr.pop
     base_name = base_arr.join('.')
     extension = parameters[:extension] || extension
-    style     = parameters[:style] || :original
+    style     = parameters.delete(:style) || :original
     parameters.delete :extension
     
 
@@ -89,8 +89,7 @@ Paperclip::Attachment.class_eval do
 
     
     original = path + "/" + File.basename(self.path(style).to_s)
-    puts "onthefly #{original}"
-    original = path + "/" + self.original_filename
+    #original = path + "/" + self.original_filename
     newfilename = path + "/" + prefix + base_name +  '.' + extension
     new_path = url_path + "/" + prefix + base_name + '.' + extension
 
