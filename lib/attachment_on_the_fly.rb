@@ -23,7 +23,7 @@ Paperclip::Attachment.class_eval do
     # if not generate image and return string to file  Fiel is in format S_Height_x_Width_FILE_NAME
     image_name = nil
     parameters = args.shift    
-    parameters ||= {:quality => 70}
+    parameters ||= {:quality => 100}
     
     if symbol.to_s.match(/^s_[0-9]+_[0-9]+/) || symbol.to_s.match(/^cls_[0-9]+_[0-9]+/)
       values = symbol.to_s.split("_")
@@ -65,31 +65,31 @@ Paperclip::Attachment.class_eval do
     end
     presufix = parameters.map{|k,v| "#{k}_#{v}" }.join('___')+ '_q_' + quality.to_s
     presufix = presufix + File.mtime(__FILE__).strftime("%y-%m-%d-%H-%M-%S")
-    prefix = "_#{prefix}#{presufix}_"
-   
+    prefix = "_#{prefix}#{presufix}_"   
     
-    path = self.path
+    style     = parameters[:style] || :original
+
+
+    path = self.path(style)
     url = self.url
 
     path_arr = path.split("/")
     file_name = path_arr.pop
     path = path_arr.join("/")
     
+
     base_arr = file_name.split('.');
     extension = base_arr.pop
     base_name = base_arr.join('.')
-    extension = parameters[:extension] || extension
-    style     = parameters.delete(:style) || :original
-    parameters.delete :extension
+    extension = parameters.delete(:extension) || extension
+    
     
 
     url_arr = url.split("/")
     url_file_name = url_arr.pop
     url_path = url_arr.join("/")
 
-    
-    original = path + "/" + File.basename(self.path(style).to_s)
-    #original = path + "/" + self.original_filename
+    original = path + "/" + self.original_filename
     newfilename = path + "/" + prefix + base_name +  '.' + extension
     new_path = url_path + "/" + prefix + base_name + '.' + extension
 
@@ -135,4 +135,3 @@ Paperclip::Attachment.class_eval do
 end
 
 class AttachmentOnTheFlyError < StandardError; end
-
