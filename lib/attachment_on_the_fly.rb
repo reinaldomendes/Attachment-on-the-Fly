@@ -71,7 +71,7 @@ Paperclip::Attachment.class_eval do
 
 
     path = self.path(style)
-    url = self.url
+    url = self.url(style)
 
     path_arr = path.split("/")
     file_name = path_arr.pop
