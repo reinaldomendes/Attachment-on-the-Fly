@@ -90,6 +90,7 @@ Paperclip::Attachment.class_eval do
     url_path = url_arr.join("/")
 
     original = path + "/" + self.original_filename
+    
     newfilename = path + "/" + prefix + base_name +  '.' + extension
     new_path = url_path + "/" + prefix + base_name + '.' + extension
 
@@ -109,21 +110,24 @@ Paperclip::Attachment.class_eval do
       end
     end
 
-    command = ""
-
+    command = []
+    command << "#{convert_command_path}convert -strip -quality #{quality} -sharpen 1"
+    
     if kind == "height"
       # resize_image infilename, outfilename , 0, height
-      command = "#{convert_command_path}convert -strip  -geometry x#{height} -quality #{quality} -sharpen 1 '#{original}' '#{newfilename}' 2>&1 > /dev/null"
+      command << " -geometry x#{height}"
     elsif kind == "width"
       # resize_image infilename, outfilename, width
-      command = "#{convert_command_path}convert -strip -geometry #{width} -quality #{quality} -sharpen 1 '#{original}' '#{newfilename}' 2>&1 > /dev/null"
+      command << "-geometry #{width}"
     elsif kind == "both"
       # resize_image infilename, outfilename, height, width
-      command = "#{convert_command_path}convert -strip -geometry #{width}x#{height} -quality #{quality} -sharpen 1 '#{original}' '#{newfilename}' 2>&1 > /dev/null"
+      command << "-geometry #{width}x#{height}"
     end
+    command << " #{Shellwords.escape(original)} #{Shellwords.escape(newfilename)}"
+    command << " 2>&1 > /dev/null"
+    command = command.join(' ')
     
-   
-    
+       
     `#{command}`
 
     if ($? != 0)
